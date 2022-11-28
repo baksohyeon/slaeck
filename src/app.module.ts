@@ -3,10 +3,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
+import { ChannelsModule } from './channels/channels.module';
+import { DirectMessagesModule } from './direct-messages/direct-messages.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), UserModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    UsersModule,
+    WorkspacesModule,
+    ChannelsModule,
+    DirectMessagesModule,
+  ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
 })
