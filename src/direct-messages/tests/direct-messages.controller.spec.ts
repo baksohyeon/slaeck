@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DirectMessagesController } from './direct-messages.controller';
+import { DirectMessagesController } from '../direct-messages.controller';
 
 describe('DirectMessagesController', () => {
   let controller: DirectMessagesController;

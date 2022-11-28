@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DirectMessagesService } from './direct-messages.service';
+import { DirectMessagesService } from '../direct-messages.service';
 
 describe('DirectMessagesService', () => {
   let service: DirectMessagesService;
