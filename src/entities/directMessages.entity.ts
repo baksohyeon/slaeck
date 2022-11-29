@@ -14,7 +14,7 @@ import { Users } from './users.entity';
 @Index('WorkspaceId', ['WorkspaceId'], {})
 @Index('dms_ibfk_2', ['SenderId'], {})
 @Index('dms_ibfk_3', ['ReceiverId'], {})
-@Entity({ schema: 'sleact', name: 'dms' })
+@Entity({ schema: 'sleact', name: 'directmesseges' })
 export class DirectMesseges {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
