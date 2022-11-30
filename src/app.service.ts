@@ -6,6 +6,6 @@ export class AppService {
   constructor(private readonly configService: ConfigService) {}
 
   getHello(): string {
-    return this.configService.get('SECRET');
+    return '안녕하세요';
   }
 }

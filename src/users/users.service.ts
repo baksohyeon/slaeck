@@ -11,22 +11,25 @@ export class UsersService {
     @InjectRepository(Users) private userRepository: Repository<Users>,
   ) {}
 
-  async getHello(joinRequestDto: JoinRequestDto) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: joinRequestDto.email,
-      },
-    });
-
-    if (!user) {
-      throw new Error('already taken user info');
-    }
+  async createUser(joinRequestDto: JoinRequestDto) {
+    // const user = await this.userRepository.findOne({
+    //   where: {
+    //     email: joinRequestDto.email,
+    //   },
+    // });
 
     const hashedPassword = await bcrypt.hash(joinRequestDto.password, 10);
-    await this.userRepository.save({
+    return this.userRepository.save({
       email: joinRequestDto.email,
       nickname: joinRequestDto.nickname,
       password: hashedPassword,
+    });
+  }
+
+  async findByEmail(email: string): Promise<Users> {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'nickname', 'password'],
     });
   }
 }

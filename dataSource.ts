@@ -10,9 +10,9 @@ const dataSource = new DataSource({
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/src/migrations/*.ts'],
-  //   charset: 'utf8mb4',
+  entities: ['src/entities/*.entity{.ts,.js}'],
+  migrations: ['./entities/*.entity{.ts,.js}'],
+  charset: 'utf8mb4',
   synchronize: true,
   logging: true,
 });
