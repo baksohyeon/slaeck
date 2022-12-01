@@ -1,26 +1,23 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
-  use(req: Request, res: Response, next: (error?: any) => void) {
-    const { ip, method, originalUrl } = req;
-    const userAgent = req.get('user-agent') || ''; // 헤더에서 가져옴
 
-    // 응답이 끝났을 때
-    res.on('finish', () => {
-      const { statusCode } = res;
-      const contentLength = res.get('content-length') || 0;
+  use(request: Request, response: Response, next: NextFunction): void {
+    const { ip, method, originalUrl } = request;
+    const userAgent = request.get('user-agent') || '';
+
+    response.on('finish', () => {
+      const { statusCode } = response;
+      const contentLength = response.get('content-length');
+
       this.logger.log(
-        `method: ${method}
-         originalUrl: ${originalUrl} 
-         statusCode: ${statusCode} 
-         contentLength: ${contentLength}
-         userAgent: ${userAgent}
-         ip: ${ip}`,
+        `${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip}`,
       );
     });
+
     next();
   }
 }

@@ -1,16 +1,15 @@
 import {
-  HttpException,
-  HttpStatus,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from 'src/entities/users.entity';
 import { DataSource, Repository } from 'typeorm';
-import { JoinRequestDto } from './dto/join.request.dto';
-import * as bcrypt from 'bcrypt';
-import { WorkspaceMembers } from 'src/entities/workspaceMembers.entity';
-import { ChannelMembers } from 'src/entities/channelMembers.entity';
+import bcrypt from 'bcrypt';
+import { ChannelMembers } from '../entities/ChannelMembers';
+
+import { Users } from '../entities/Users';
+import { WorkspaceMembers } from '../entities/WorkspaceMembers';
 
 @Injectable()
 export class UsersService {
@@ -23,64 +22,50 @@ export class UsersService {
     private dataSource: DataSource,
   ) {}
 
-  async createUser(joinRequestDto: JoinRequestDto) {
+  async findByEmail(email: string) {
+    return this.usersRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password'],
+    });
+  }
+
+  async join(email: string, nickname: string, password: string) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
-    queryRunner.startTransaction();
-    const user = await this.usersRepository.findOne({
-      where: {
-        email: joinRequestDto.email,
-      },
-    });
-
+    await queryRunner.startTransaction();
+    const user = await queryRunner.manager
+      .getRepository(Users)
+      .findOne({ where: { email } });
     if (user) {
-      throw new UnauthorizedException('이미 존재하는 사용자입니다.');
+      throw new ForbiddenException('이미 존재하는 사용자입니다');
     }
-
-    const hashedPassword = await bcrypt.hash(joinRequestDto.password, 10);
-
+    const hashedPassword = await bcrypt.hash(password, 12);
     try {
-      const newUser = await queryRunner.manager.getRepository(Users).save({
-        email: joinRequestDto.email,
-        nickname: joinRequestDto.nickname,
+      const returned = await queryRunner.manager.getRepository(Users).save({
+        email,
+        nickname,
         password: hashedPassword,
       });
-
-      await queryRunner.manager.getRepository(WorkspaceMembers).save({
-        UserId: newUser.id,
-        WorkspaceId: 1,
-      });
+      const workspaceMember = queryRunner.manager
+        .getRepository(WorkspaceMembers)
+        .create();
+      workspaceMember.UserId = returned.id;
+      workspaceMember.WorkspaceId = 1;
+      await queryRunner.manager
+        .getRepository(WorkspaceMembers)
+        .save(workspaceMember);
       await queryRunner.manager.getRepository(ChannelMembers).save({
-        UserId: newUser.id,
+        UserId: returned.id,
         ChannelId: 1,
       });
       await queryRunner.commitTransaction();
       return true;
-    } catch (e) {
+    } catch (error) {
+      console.error(error);
       await queryRunner.rollbackTransaction();
+      throw error;
     } finally {
       await queryRunner.release();
     }
-  }
-
-  async findByEmail(email: string): Promise<Users> {
-    return this.usersRepository.findOne({
-      where: { email },
-      select: ['id', 'email', 'nickname', 'password'],
-    });
-  }
-
-  async deserializeUser(userId: string, done: CallableFunction) {
-    await this.usersRepository
-      .findOneOrFail({
-        where: { id: +userId },
-        select: ['id', 'email', 'nickname'],
-        relations: ['Workspaces'],
-      })
-      .then((user) => {
-        console.log('user', user);
-        done(null, user);
-      })
-      .catch((error) => done(error));
   }
 }

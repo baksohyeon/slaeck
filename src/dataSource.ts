@@ -1,20 +1,20 @@
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
-import { ChannelChats } from './entities/channelChats.entity';
-import { ChannelMembers } from './entities/channelMembers.entity';
-import { Channels } from './entities/channels.entity';
-import { DirectMesseges } from './entities/directMessages.entity';
-import { Mentions } from './entities/mentions.entity';
-import { Users } from './entities/users.entity';
-import { WorkspaceMembers } from './entities/workspaceMembers.entity';
-import { Workspaces } from './entities/workspaces.entity';
+import { ChannelChats } from '../../slack-backend/src-deprecated/entities/channelChats.entity';
+import { ChannelMembers } from '../../slack-backend/src-deprecated/entities/channelMembers.entity';
+import { Channels } from '../../slack-backend/src-deprecated/entities/channels.entity';
+import { DirectMesseges } from '../../slack-backend/src-deprecated/entities/directMessages.entity';
+import { Mentions } from '../../slack-backend/src-deprecated/entities/mentions.entity';
+import { Users } from '../../slack-backend/src-deprecated/entities/users.entity';
+import { WorkspaceMembers } from '../../slack-backend/src-deprecated/entities/workspaceMembers.entity';
+import { Workspaces } from '../../slack-backend/src-deprecated/entities/workspaces.entity';
 
 dotenv.config();
 
 const dataSource = new DataSource({
   type: 'mysql',
   host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT),
+  port: parseInt(process.env.DATABASE_PORT as string),
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
