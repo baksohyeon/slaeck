@@ -10,6 +10,14 @@ import { DirectMessagesModule } from './direct-messages/direct-messages.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { ChannelChats } from './entities/channelChats.entity';
+import { ChannelMembers } from './entities/channelMembers.entity';
+import { Channels } from './entities/channels.entity';
+import { DirectMesseges } from './entities/directMessages.entity';
+import { Mentions } from './entities/mentions.entity';
+import { Users } from './entities/users.entity';
+import { WorkspaceMembers } from './entities/workspaceMembers.entity';
+import { Workspaces } from './entities/workspaces.entity';
 
 @Module({
   imports: [
@@ -25,8 +33,17 @@ import { AuthModule } from './auth/auth.module';
       port: parseInt(process.env.DATABASE_PORT),
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: ['./entities/*.entity{.ts,.js}'],
-      synchronize: true,
+      entities: [
+        ChannelChats,
+        ChannelMembers,
+        Channels,
+        DirectMesseges,
+        Mentions,
+        Users,
+        WorkspaceMembers,
+        Workspaces,
+      ],
+      synchronize: false,
       logging: true,
       keepConnectionAlive: true,
       autoLoadEntities: true,

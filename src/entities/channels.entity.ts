@@ -16,7 +16,7 @@ import { Users } from './users.entity';
 import { Workspaces } from './workspaces.entity';
 
 @Index('WorkspaceId', ['WorkspaceId'], {})
-@Entity({ schema: 'sleact' })
+@Entity({ schema: 'sleact', name: 'channels' })
 export class Channels {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
@@ -44,9 +44,13 @@ export class Channels {
   @OneToMany(() => ChannelChats, (channelchats) => channelchats.Channel)
   ChannelChats: ChannelChats[];
 
-  @OneToMany(() => ChannelMembers, (channelMembers) => channelMembers.Channel, {
-    cascade: ['insert'],
-  })
+  @OneToMany(
+    () => ChannelMembers,
+    (channelMembers) => channelMembers.Channels,
+    {
+      cascade: ['insert'],
+    },
+  )
   ChannelMembers: ChannelMembers[];
 
   @ManyToMany(() => Users, (users) => users.Channels)

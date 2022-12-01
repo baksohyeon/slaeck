@@ -30,7 +30,7 @@ export class ChannelMembers {
     onUpdate: 'CASCADE',
   })
   @JoinColumn([{ name: 'ChannelId', referencedColumnName: 'id' }])
-  Channel: Channels;
+  Channels: Channels;
 
   @ManyToOne(() => Users, (users) => users.ChannelMembers, {
     onDelete: 'CASCADE',
